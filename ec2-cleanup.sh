@@ -1,3 +1,5 @@
+rm -f mapping.json
+rm -f quartical.pem
 aws ec2 delete-key-pair --key-name $KEY_NAME
 aws ec2 delete-security-group --group-id $SECGRP
 aws ec2 disassociate-route-table --association-id $RTBA

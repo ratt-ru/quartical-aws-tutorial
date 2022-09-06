@@ -22,6 +22,7 @@ aws ec2 create-key-pair \
         --output text > $KEY_FILE
 chmod og-rwx $KEY_FILE
 
+# Find a Jammy Amazon Machine Image
 export AMI=$(aws ec2 describe-images \
         --region $REGION \
         --filters "Name=root-device-type,Values=[ebs]" \
@@ -29,3 +30,25 @@ export AMI=$(aws ec2 describe-images \
         "Name=name,Values=ubuntu/images/hvm-ssd/ubuntu-jammy-22.04*" \
         --query "Images[*].[ImageId,CreationDate]" \
         --output text | sort -k2 -r | head -n1 | cut -f1)
+
+# Get the EBS device and snapshot ids
+read -r DEVICE SNAPSHOT < <(aws ec2 describe-images \
+        --image-ids $AMI \
+        --query Images[*].BlockDeviceMappings[0].[DeviceName,Ebs.SnapshotId] \
+        --output text)
+
+# Request a 50GB EBS blocks size
+cat <<EOF > mapping.json
+[
+        {
+                "DeviceName": "$DEVICE",
+                "Ebs": {
+                        "DeleteOnTermination": true,
+                        "SnapshotId": "$SNAPSHOT",
+                        "VolumeSize": 50,
+                        "VolumeType": "gp2",
+                        "Encrypted": false
+                }
+        }
+]
+EOF

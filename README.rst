@@ -22,6 +22,7 @@ and then start an EC2 instance.
         --subnet-id $SUBNET \
         --security-group-id $SECGRP \
         --instance-type $INSTANCE_TYPE \
+        --block-device-mapping file://mapping.json \
         --associate-public-ip-address \
         --query "Instances[*].InstanceId" \
         --output text)
@@ -37,6 +38,18 @@ andd SSH'ing into the box
         --output text)
     $ ssh-add quartical.pem
     $ ssh ubuntu@$IP
+
+Install Quartical
+*****************
+
+Run the following
+
+.. code-block:: bash
+
+    $ sudo apt update -y
+    $ sudo apt install -y python-is-python3 python3
+    $ sudo pip install quartical
+
 
 Running Quartical
 *****************

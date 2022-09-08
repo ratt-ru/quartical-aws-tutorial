@@ -1,7 +1,7 @@
 export KEY_FILE=quartical.pem
 export KEY_NAME=quartical-key
 export REGION=af-south-1
-export INSTANCE_TYPE=t3.micro
+export INSTANCE_TYPE=m5.4xlarge
 
 export VPC=$(aws ec2 create-vpc --cidr-block 172.16.0.0/16 --query Vpc.VpcId --output text)
 aws ec2 create-tags --resources $VPC --tags "Key=Name,Value=quartical-test"
@@ -21,6 +21,8 @@ aws ec2 create-key-pair \
         --query "KeyMaterial" \
         --output text > $KEY_FILE
 chmod og-rwx $KEY_FILE
+
+export ARN=$(aws sts get-caller-identity --query "Arn" --output text)
 
 # Find a Jammy Amazon Machine Image
 export AMI=$(aws ec2 describe-images \
@@ -45,7 +47,7 @@ cat <<EOF > mapping.json
                 "Ebs": {
                         "DeleteOnTermination": true,
                         "SnapshotId": "$SNAPSHOT",
-                        "VolumeSize": 50,
+                        "VolumeSize": 15,
                         "VolumeType": "gp2",
                         "Encrypted": false
                 }

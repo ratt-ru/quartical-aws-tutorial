@@ -36,8 +36,7 @@ andd SSH'ing into the box
         --instance-ids $INSTANCE_ID \
         --query "Reservations[*].Instances[*].PublicIpAddress" \
         --output text)
-    $ ssh-add quartical.pem
-    $ ssh ubuntu@$IP
+    $ ssh -i quartical.pem ubuntu@$IP
 
 Install Quartical
 *****************
@@ -47,26 +46,30 @@ Run the following
 .. code-block:: bash
 
     $ sudo apt update -y
-    $ sudo apt install -y python-is-python3 python3
+    $ sudo apt install -y python3 python3-pip python-is-python3 awscli
     $ sudo pip install quartical
 
 
 Running Quartical
 *****************
 
-For the sake of simplicity, create a working directory and ``cd`` into it:
+For the sake of simplicity, create a working directory and download
+the reduction data into it:
 
 .. code-block:: bash
 
-    $ mkdir data_reduction
-    $ cd data_reduction
+    $ mkdir data
+    $ cd data
+    $ curl https://ratt-public-data.s3.af-south-1.amazonaws.com/eso.ms.tar.gz | tar xzvf -
 
 The default arguments will solve for a high time and frequency resolution gain term and
 output the results to ``gains.qc``:
 
 .. code-block:: bash
 
-    $ goquartical input_ms.path=~/data/WSRT.MS input_model.recipe=MODEL_DATA
+    $ goquartical \
+        input_ms.path=~/data/ms1_primary_subset.ms \
+        input_model.recipe=MODEL_DATA
 
 This is the simplest use of QuartiCal. A more realistic command, performing typical gain,
 delay and bandpass calibration, would be:
@@ -89,7 +92,7 @@ delay and bandpass calibration, would be:
          G.freq_interval=1 \
          output.overwrite=1
 
-These options, which can become quite lengthy, can instead be sepcified via a .yaml file.
+These options, which can become quite lengthy, can instead be specified via a .yaml file.
 To create a .yaml file with a name of your choice, run:
 
 .. code-block:: bash

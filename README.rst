@@ -77,7 +77,7 @@ delay and bandpass calibration, would be:
 .. code-block:: bash
 
     $ goquartical \
-        input_ms.path=~/data/WSRT.MS \
+        input_ms.path=~/data/ms1_primary_subset.ms \
          input_model.recipe=MODEL_DATA \
          solver.terms="[G,K,B]" \
          solver.iter_recipe="[100,100,100]" \
